@@ -4,4 +4,4 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-
+output_dir: "docs"
