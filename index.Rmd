@@ -3,7 +3,7 @@ linktormd: true
 leafletmap: true
 always_allow_html: yes
 output:  html_document
-runtime: shiny
+#runtime: shiny
 #site: "_site.yml"
 ---
 
@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r, m,message= FALSE,warning = FALSE,out.width='100%'}
-library(shiny)
+#library(shiny)
 library(leaflet)
 library(raster)
 library(rgdal)
