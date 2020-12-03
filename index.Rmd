@@ -1,4 +1,11 @@
-
+---
+linktormd: true
+leafletmap: true
+always_allow_html: yes
+output:  html_document
+runtime: shiny
+#site: "_site.yml"
+---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
