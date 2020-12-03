@@ -1,0 +1,16 @@
+--- 
+title: "Interactive Map Template"
+author: "Isabel Luotto"
+date: "3/12/2020"
+output: html_document
+runtime: shiny
+always_allow_html: yes
+leafletmap: true
+site: bookdown::bookdown_site
+documentclass: book
+papersize: b5
+fontsize: 10pt
+---
+\mainmatter
+\pagestyle{fancy}
+

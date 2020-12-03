@@ -1,12 +1,4 @@
----
-title: "Interactive Map Template"
-author: "Isabel Luotto"
-date: "3/12/2020"
-output: html_document
-runtime: shiny
-always_allow_html: yes
-leafletmap: true
----
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
