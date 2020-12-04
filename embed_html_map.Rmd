@@ -1,3 +1,0 @@
-```{r, echo=FALSE}
-knitr::include_url("https://isa-luotto.github.io/Interactive_Maps/")
-```

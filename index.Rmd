@@ -25,7 +25,7 @@ SIS <- read_sheet(sheet_url)
 
 SIS$isocode <- countrycode(SIS$ISO, origin = 'iso3c', destination = 'iso2c')
 
-map <- readOGR("data/gaul0_asap.shp", verbose = FALSE)
+map <- readOGR("data/gaul_simp_s.shp", verbose = FALSE)
 map <- merge(map, SIS, by= "isocode", all.x= TRUE)
 
 
