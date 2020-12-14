@@ -1,17 +1,14 @@
----
-linktormd: true
-leafletmap: true
-always_allow_html: yes
-output:  html_document
-#runtime: shiny
-#site: "_site.yml"
----
+#
+# This is a Shiny web application. You can run the application by clicking
+# the 'Run App' button above.
+#
+# Find out more about building applications with Shiny here:
+#
+#    http://shiny.rstudio.com/
+#
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
-```
+rm(list = ls())
 
-```{r, m,message= FALSE,warning = FALSE,out.width='100%'}
 #library(shiny)
 library(leaflet)
 library(raster)
@@ -19,15 +16,10 @@ library(rgdal)
 library(googlesheets4)
 library(countrycode)
 
+
 #+++++++++++User defined variables++++++++++++#
 #Data to be imported from google sheet
 sheet_url <- "https://docs.google.com/spreadsheets/d/1YZ5FSXnz6g7Oy-jx_vN_81odxy6i1710DPKI08bnwSI/edit#gid=0"
-
-#Create color palette
-colors <- c("chartreuse4", "chocolate1", "coral1", "chocolate4")
-
-
-
 
 
 #+++++++ Create the map +++++++++++++++++++#
@@ -70,8 +62,5 @@ m <-leaflet(map)%>%
   addMarkers(icon = ~Icons[as.factor(map$Stauts_SIS)]
              ,popup = label 
              )
-m
-```
-
-
+  
 
