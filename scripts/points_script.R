@@ -23,7 +23,7 @@ sheet_url <- "https://docs.google.com/spreadsheets/d/1YZ5FSXnz6g7Oy-jx_vN_81odxy
 
 
 #+++++++ Create the points +++++++++++++++++++#
-SIS <- read_sheet(sheet_url)
+SIS <- read_sheet(sheet_url, sheet ="NSIS")
 
 SIS$isocode <- countrycode(SIS$ISO, origin = 'iso3c', destination = 'iso2c')
 
@@ -35,15 +35,17 @@ SIS[199,6]<- "SISLAC"
 points <- merge(points, SIS, by= "isocode", all.x= TRUE)
 #Relevel NAs
 points$Stauts_SIS <- ifelse(is.na(points$Stauts_SIS), "Not_available", points$Stauts_SIS)
-#colors
+
+#Select only points with information
+points <- subset(points, points$Stauts_SIS == "ongoing"|
+                   points$Stauts_SIS == "completed"|
+                   points$Stauts_SIS == "updating")
 
 #Icons
 Icons <- iconList(ongoing = makeIcon("data/gear.svg", iconWidth = 28, iconHeight =32),
                   completed = makeIcon("data/checked.svg", iconWidth = 28, iconHeight =32),
-                  updating = makeIcon("data/updating.svg", iconWidth = 28, iconHeight =32)
-                  ,No = makeIcon("data/ic_invisible.svg", iconWidth = 28, iconHeight =32)
-                  ,Not_available =makeIcon("data/ic_invisible.svg", iconWidth = 28, iconHeight =32)
-                 )
+                  updating = makeIcon("data/updating.svg", iconWidth = 28, iconHeight =32
+                 ))
 
 
 
