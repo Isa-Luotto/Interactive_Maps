@@ -40,9 +40,10 @@ points$Stauts_SIS <- ifelse(is.na(points$Stauts_SIS), "Not_available", points$St
 #Icons
 Icons <- iconList(ongoing = makeIcon("data/gear.svg", iconWidth = 28, iconHeight =32),
                   completed = makeIcon("data/checked.svg", iconWidth = 28, iconHeight =32),
-                  updating = makeIcon("data/updating.svg", iconWidth = 28, iconHeight =32),
-                  No = makeIcon("data/ic_invisible.svg", iconWidth = 28, iconHeight =32),
-                  Not_available =makeIcon("data/ic_invisible.svg", iconWidth = 28, iconHeight =32) )
+                  updating = makeIcon("data/updating.svg", iconWidth = 28, iconHeight =32)
+                  ,No = makeIcon("data/ic_invisible.svg", iconWidth = 28, iconHeight =32)
+                  ,Not_available =makeIcon("data/ic_invisible.svg", iconWidth = 28, iconHeight =32)
+                 )
 
 
 

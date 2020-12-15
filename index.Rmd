@@ -28,46 +28,46 @@ colors <- c("chartreuse4", "chocolate1", "coral1", "chocolate4")
 
 
 
-
-
-#+++++++ Create the map +++++++++++++++++++#
+#+++++++ Create the points +++++++++++++++++++#
 SIS <- read_sheet(sheet_url)
 
 SIS$isocode <- countrycode(SIS$ISO, origin = 'iso3c', destination = 'iso2c')
 
 
-map <- readOGR("data/point_locations_world.shp", verbose = FALSE)
-map@data[184,11] <- "SISLAC"
+points <- readOGR("data/point_locations_world.shp", verbose = FALSE)
+
+points@data[184,11] <- "SISLAC"
 SIS[199,6]<- "SISLAC"
-map <- merge(map, SIS, by= "isocode", all.x= TRUE)
+points <- merge(points, SIS, by= "isocode", all.x= TRUE)
 #Relevel NAs
-map$Stauts_SIS <- ifelse(is.na(map$Stauts_SIS), "Not_available", map$Stauts_SIS)
+points$Stauts_SIS <- ifelse(is.na(points$Stauts_SIS), "Not_available", points$Stauts_SIS)
 #colors
 
 #Icons
-Icons <- iconList(ongoing = makeIcon("data/ic_yellow.svg", iconWidth = 28, iconHeight =32),
-                  completed = makeIcon("data/ic_green.svg", iconWidth = 28, iconHeight =32),
-                  updating = makeIcon("data/ic_blue.svg", iconWidth = 28, iconHeight =32),
-                  No = makeIcon("data/ic_invisible.svg", iconWidth = 28, iconHeight =32),
-                  Not_available =makeIcon("data/ic_invisible.svg", iconWidth = 28, iconHeight =32) )
+Icons <- iconList(ongoing = makeIcon("data/gear.svg", iconWidth = 28, iconHeight =32),
+                  completed = makeIcon("data/checked.svg", iconWidth = 28, iconHeight =32),
+                  updating = makeIcon("data/updating.svg", iconWidth = 28, iconHeight =32)
+                  ,No = makeIcon("data/ic_invisible.svg", iconWidth = 28, iconHeight =32)
+                  ,Not_available =makeIcon("data/ic_invisible.svg", iconWidth = 28, iconHeight =32)
+                 )
 
 
 
 #Label
-label <- paste("Country: ", map$`Country Name`,"<br/>", 
-               "Status: ", map$Stauts_SIS, "<br/>",
-               " ", map$SIS,"<br/>",
-               "Link: ", map$Link
+label <- paste("Country: ", points$`Country Name`,"<br/>", 
+               "Status: ", points$Stauts_SIS, "<br/>",
+               " ", points$SIS,"<br/>",
+               "Link: ","<a href='",points$Link,"'>", points$Link ,"</a>"
                )  %>%
   lapply(htmltools::HTML)
-data <- as.data.frame(map@data)
+data <- as.data.frame(points@data)
 
 
-m <-leaflet(map)%>%
+m <-leaflet(points)%>%
   addTiles() %>% 
   setView( lng = 2.34, lat = 48.85, zoom = 2 ) %>% 
   addProviderTiles("Esri.WorldPhysical")%>% 
-  addMarkers(icon = ~Icons[as.factor(map$Stauts_SIS)]
+  addMarkers(icon = ~Icons[as.factor(points$Stauts_SIS)]
              ,popup = label 
              )
 m
