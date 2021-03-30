@@ -7,12 +7,13 @@ library(leaflet)
 library(googlesheets4)
 library(countrycode)
 library(htmlwidgets)
+library(rgdal)
 
 #+++++++++++User defined variables++++++++++++#
 #Data to be imported from google sheet
-sheet_url <- "https://docs.google.com/spreadsheets/d/1YZ5FSXnz6g7Oy-jx_vN_81odxy6i1710DPKI08bnwSI/edit#gid=0"
+sheet_url <- "https://docs.google.com/spreadsheets/d/1QZj0VhWQtYyAl39E5xIRePR7eCBjWxo1rErF5S3vuu0/edit#gid=1572931594"
 ##sheet of interest for the map
-sheet <- "NSIS"
+sheet <- "Country Overview"
 
 
 
@@ -20,16 +21,12 @@ sheet <- "NSIS"
 
 
 #+++++++ Create the map +++++++++++++++++++#
-SIS <- read_sheet(sheet_url, sheet =sheet)
+data <- read_sheet(sheet_url, sheet =sheet)
 
-SIS$isocode <- countrycode(SIS$ISO, origin = 'iso3c', destination = 'iso2c')
+map <- readOGR("data/un_ultra_light.shp", verbose = FALSE)
 
 
-points <- readOGR("data/point_locations_world.shp", verbose = FALSE)
-
-points@data[184,11] <- "SISLAC"
-SIS[199,6]<- "SISLAC"
-points <- merge(points, SIS, by= "isocode", all.x= TRUE)
+map <- merge(map, data, by= "isocode", all.x= TRUE)
 #Relevel NAs
 points$Stauts_SIS <- ifelse(is.na(points$Stauts_SIS), "Not_available", points$Stauts_SIS)
 
