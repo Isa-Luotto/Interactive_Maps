@@ -1,80 +1,69 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
+
 
 rm(list = ls())
 
 #library(shiny)
 library(leaflet)
-library(raster)
-library(rgdal)
 library(googlesheets4)
 library(countrycode)
+library(htmlwidgets)
+library(rgdal)
 
 #+++++++++++User defined variables++++++++++++#
 #Data to be imported from google sheet
-sheet_url <- "https://docs.google.com/spreadsheets/d/1YZ5FSXnz6g7Oy-jx_vN_81odxy6i1710DPKI08bnwSI/edit#gid=0"
+sheet_url <- "https://docs.google.com/spreadsheets/d/1QZj0VhWQtYyAl39E5xIRePR7eCBjWxo1rErF5S3vuu0/edit#gid=1572931594"
+##sheet of interest for the map
+sheet <- "Country Overview"
 
-#Create color palette
-colors <- c("chartreuse4", "chocolate1", "coral1", "chocolate4")
 
 
 
 
 
 #+++++++ Create the map +++++++++++++++++++#
-SIS <- read_sheet(sheet_url)
+data <- read_sheet(sheet_url, sheet =sheet)
 
-SIS$isocode <- countrycode(SIS$ISO, origin = 'iso3c', destination = 'iso2c')
+map <- readOGR("data/un_ultra_light.shp", verbose = FALSE)
 
-map <- readOGR("data/gaul_simp_s.shp", verbose = FALSE)
-map <- merge(map, SIS, by= "isocode", all.x= TRUE)
-factpal <- colorFactor(colors, map$Stauts_SIS)
+
+map <- merge(map, data, by= "isocode", all.x= TRUE)
+#Relevel NAs
+points$Stauts_SIS <- ifelse(is.na(points$Stauts_SIS), "Not_available", points$Stauts_SIS)
+
+#Select only points with information
+points <- subset(points, points$Stauts_SIS == "ongoing"|
+                   points$Stauts_SIS == "completed"|
+                   points$Stauts_SIS == "updating")
+
+#Icons
+Icons <- iconList(ongoing = makeIcon("data/gear.svg", iconWidth = 28, iconHeight =32),
+                  completed = makeIcon("data/checked.svg", iconWidth = 28, iconHeight =32),
+                  updating = makeIcon("data/updating.svg", iconWidth = 28, iconHeight =32
+                  ))
+
+
+
 #Label
-label <- paste("Country: ", map$`Country Name`,"<br/>", 
-               "Status: ", map$Stauts_SIS, "<br/>",
-               " ", map$Name_SIS)  %>%
+label <- paste("Country: ", points$`Country Name`,"<br/>", 
+               "Status: ", points$Stauts_SIS, "<br/>",
+               " ", points$SIS,"<br/>",
+               "Link: ","<a href='",points$Link,"'>", points$Link ,"</a>"
+)  %>%
   lapply(htmltools::HTML)
+data <- as.data.frame(points@data)
 
+#map_url <- "https://api.mapbox.com/styles/v1/iluotto/ckkh12bbl0wgu17qq5kqtioqc/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWx1b3R0byIsImEiOiJja2tneXZxd2kwOG9oMm9yanVxcWNyM3Y4In0.e0wAm5SiLRvPyIMMRNszjw"
+map_att <- "© <a href='https://www.mapbox.com/map-feedback/'>Mapbox</a> Basemap © </a>"
+map_url <- "https://api.mapbox.com/styles/v1/iluotto/ckki00fpz0emt17pb31vfwpvb/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiaWx1b3R0byIsImEiOiJja2tneXZxd2kwOG9oMm9yanVxcWNyM3Y4In0.e0wAm5SiLRvPyIMMRNszjw"
 
-
-
-m <-leaflet(map)%>%
-  addTiles() %>% 
+m <-leaflet(points)%>%
+  addTiles(urlTemplate=map_url, attribution = map_att) %>% 
   setView( lng = 2.34, lat = 48.85, zoom = 2 ) %>% 
-  addProviderTiles("Esri.WorldImagery")%>% 
   
-  addPolygons(stroke = FALSE, smoothFactor = 0.2, fillOpacity = 1,
-              fillColor = ~factpal(map@data$Stauts_SIS),
-              weight = 10,
-              opacity = 1,
-              color = "white") %>% 
-  addPolygons(
-    fillColor = ~factpal(map@data$Stauts_SIS),
-    weight = 2,
-    opacity = 1,
-    color = "white",
-    dashArray = "3",
-    fillOpacity = 0.7,
-    highlight = highlightOptions(
-      weight = 5,
-      color = "#666",
-      dashArray = "",
-      fillOpacity = 0.7,
-      bringToFront = TRUE),
-    label = label,
-    labelOptions = labelOptions(
-      style = list("font-weight" = "normal", padding = "3px 8px"),
-      textsize = "15px",
-      direction = "auto"))%>%
-  
-  #Add legend to map
-  
-  addLegend(pal = factpal, values = map@data$Stauts_SIS, opacity = 0.7, title = NULL,
-            position = "bottomright")
+  #addProviderTiles("Esri.WorldPhysical")%>% 
+  addMarkers(icon = ~Icons[as.factor(points$Stauts_SIS)]
+             ,popup = label 
+  )
 m
+
+saveWidget(m, file="custom_maptile_RS.html")
