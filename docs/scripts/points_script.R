@@ -39,7 +39,7 @@ points$INSII <- ifelse(is.na(points$INSII), "Not_available", points$INSII)
 
 
 #Icons
-Icons <- iconList(Yes = makeIcon("data/checked.svg", iconWidth = 20, iconHeight =24),
+Icons <- iconList(Yes = makeIcon("data/location.svg", iconWidth = 20, iconHeight =24),
                     NO = makeIcon("data/ic_invisible.svg", iconWidth = 20, iconHeight =24),
                   Not_available = makeIcon("data/ic_invisible.svg", iconWidth = 20, iconHeight =24))
 
